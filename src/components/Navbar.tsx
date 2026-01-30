@@ -1,20 +1,38 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Bot, Activity, Menu, X } from "lucide-react";
+import { Bot, Activity, Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isHome = location.pathname === "/";
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "AI Bots", href: "/ai-bots", icon: Bot },
     { name: "Live Vitals", href: "/live-vitals", icon: Activity },
-    { name: "Features", href: "#features" },
-    { name: "Contact", href: "#contact" },
+    { name: "Features", href: isHome ? "#features" : "/#features" },
+    { name: "Contact", href: isHome ? "#contact" : "/#contact" },
   ];
+
+  const handleNavClick = (href: string) => {
+    setMobileMenuOpen(false);
+    const hash = href.startsWith("/#") ? href.slice(1) : href;
+    if (hash.startsWith("#")) {
+      if (location.pathname !== "/") {
+        navigate("/");
+        setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" }), 150);
+      } else {
+        document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <motion.nav
@@ -25,15 +43,19 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - SafeMOM with our logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2"
             >
-              <Heart className="w-7 h-7 text-heart fill-heart/30" strokeWidth={2} />
-              <span className="text-xl font-semibold text-foreground">
+              <img
+                src="/safemom-logo.png"
+                alt="SafeMOM"
+                className="h-9 w-auto object-contain"
+              />
+              <span className="text-xl font-semibold text-foreground hidden sm:inline">
                 Safe<span className="text-primary">MOM</span>
               </span>
             </motion.div>
@@ -45,6 +67,12 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.href}
+                onClick={(e) => {
+                  if (link.href.startsWith("#") || link.href.startsWith("/#")) {
+                    e.preventDefault();
+                    handleNavClick(link.href);
+                  }
+                }}
                 className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-sm font-medium"
               >
                 {link.icon && <link.icon className="w-4 h-4" />}
@@ -53,8 +81,16 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right side buttons */}
+          {/* Right side: theme toggle + buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
             <Button
               variant="outline"
               onClick={() => navigate("/role-select")}
@@ -71,12 +107,22 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <button
-            className="md:hidden text-foreground p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button
+              className="text-foreground p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -92,8 +138,12 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   to={link.href}
+                  onClick={() => {
+                    if (link.href.startsWith("#") || link.href.startsWith("/#")) {
+                      handleNavClick(link.href);
+                    }
+                  }}
                   className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.icon && <link.icon className="w-4 h-4" />}
                   {link.name}

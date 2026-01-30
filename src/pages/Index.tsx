@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import MotherBabyHeartAnimation from "@/components/MotherBabyHeartAnimation";
 import Navbar from "@/components/Navbar";
+import OurMissionSection from "@/components/OurMissionSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import LiveVitalsSection from "@/components/LiveVitalsSection";
 import FAQSection from "@/components/FAQSection";
@@ -126,6 +127,9 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Our Mission Section - before Features */}
+      <OurMissionSection />
 
       {/* Features Section */}
       <FeaturesSection />

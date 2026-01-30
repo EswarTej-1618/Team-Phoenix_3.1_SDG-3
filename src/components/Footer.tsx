@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
-import { Heart, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const productLinks = [
-    { name: "Features", href: "#features" },
+    { name: "Features", href: "/#features" },
     { name: "Live Vitals", href: "/live-vitals" },
     { name: "AI Chatbot", href: "/ai-bots" },
     { name: "For Clinics", href: "#" },
   ];
 
   const resourceLinks = [
-    { name: "FAQ", href: "#faq" },
+    { name: "FAQ", href: "/#faq" },
     { name: "Privacy Policy", href: "#" },
     { name: "Terms of Service", href: "#" },
     { name: "Documentation", href: "#" },
@@ -32,7 +32,11 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <Heart className="w-7 h-7 text-heart fill-heart/30" strokeWidth={2} />
+              <img
+                src="/safemom-logo.png"
+                alt="SafeMOM"
+                className="h-9 w-auto object-contain"
+              />
               <span className="text-xl font-semibold text-foreground">
                 Safe<span className="text-primary">MOM</span>
               </span>
@@ -110,9 +114,10 @@ const Footer = () => {
           <p className="text-muted-foreground text-sm">
             © 2024 SafeMOM. All rights reserved.
           </p>
-          <p className="text-muted-foreground text-sm">
-            Made with <Heart className="w-4 h-4 inline text-heart fill-heart mx-1" /> for mothers everywhere
-          </p>
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <img src="/safemom-logo.png" alt="SafeMOM" className="h-6 w-auto object-contain opacity-90" />
+            <span>SafeMOM — for mothers everywhere</span>
+          </div>
         </div>
       </div>
     </footer>
