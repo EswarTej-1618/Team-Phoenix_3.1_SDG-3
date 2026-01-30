@@ -109,7 +109,7 @@ const LiveVitalsSection = () => {
   ];
 
   return (
-    <section id="live-vitals" className="py-24 px-6">
+    <section id="live-vitals" className="py-24 px-6 lg:px-12">
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <motion.div

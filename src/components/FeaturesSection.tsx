@@ -42,7 +42,7 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 px-6 bg-secondary/30">
+    <section id="features" className="py-24 px-6 lg:px-12 bg-secondary/30">
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <motion.div

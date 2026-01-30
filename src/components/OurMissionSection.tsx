@@ -4,7 +4,7 @@ import { Quote } from "lucide-react";
 
 const OurMissionSection = () => {
   return (
-    <section id="mission" className="py-24 px-6 bg-secondary/30">
+    <section id="mission" className="py-24 px-6 lg:px-12 bg-secondary/30">
       <div className="container mx-auto max-w-6xl">
         {/* Section Header - similar to Powerful Features */}
         <motion.div

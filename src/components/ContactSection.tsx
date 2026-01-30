@@ -6,7 +6,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 const ContactSection = () => {
   return (
-    <section id="contact" className="py-24 px-6">
+    <section id="contact" className="py-24 px-6 lg:px-12">
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <motion.div

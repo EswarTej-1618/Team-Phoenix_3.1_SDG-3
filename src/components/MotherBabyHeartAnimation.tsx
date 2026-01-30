@@ -4,8 +4,8 @@
 import { motion } from "framer-motion";
 
 const RING_COUNT = 5;
-const OVAL_WIDTH = 240;
-const OVAL_HEIGHT = 300;
+const OVAL_WIDTH = 280;
+const OVAL_HEIGHT = 350;
 
 const MotherBabyHeartAnimation = () => {
   return (

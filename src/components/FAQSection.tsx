@@ -35,8 +35,8 @@ const faqs = [
 
 const FAQSection = () => {
   return (
-    <section id="faq" className="py-24 px-6 bg-secondary/30">
-      <div className="container mx-auto max-w-3xl">
+    <section id="faq" className="py-24 px-6 lg:px-12 bg-secondary/30">
+      <div className="container mx-auto max-w-3xl lg:max-w-4xl">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -20,7 +20,7 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 lg:px-12 xl:px-16 pt-20 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Animated dots/particles */}
@@ -112,7 +112,7 @@ const Index = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex-1 flex items-center justify-center"
+            className="flex-1 flex items-center justify-center scale-100 lg:scale-125 xl:scale-[1.35]"
           >
             <MotherBabyHeartAnimation />
           </motion.div>

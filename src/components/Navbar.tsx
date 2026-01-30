@@ -1,22 +1,27 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Bot, Activity, Menu, X, Sun, Moon } from "lucide-react";
+import { Bot, Activity, Menu, X, Sun, Moon, Users, Stethoscope, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, isDoctor, isAsha, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isHome = location.pathname === "/";
 
   const navLinks = [
     { name: "Home", href: "/" },
+    ...(isDoctor || isAsha ? [{ name: "Patient details", href: "/patient-details", icon: Users }] : []),
+    ...(user?.role === "mother" ? [{ name: "My Profile", href: "/mother-dashboard", icon: Users }] : []),
     { name: "AI Bots", href: "/ai-bots", icon: Bot },
-    { name: "Live Vitals", href: "/live-vitals", icon: Activity },
+    ...(isAsha ? [] : [{ name: "Live Vitals", href: "/live-vitals", icon: Activity }]),
     { name: "Features", href: isHome ? "#features" : "/#features" },
     { name: "Contact", href: isHome ? "#contact" : "/#contact" },
   ];
@@ -41,7 +46,7 @@ const Navbar = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border/50"
     >
-      <div className="container mx-auto px-6 py-4">
+      <div className="container mx-auto px-6 lg:px-8 xl:px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo - SafeMOM with oval logo */}
           <Link to="/" className="flex items-center gap-2 group">
@@ -83,7 +88,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right side: theme toggle + buttons */}
+          {/* Right side: theme toggle + logged-in profile or Login/Sign Up */}
           <div className="hidden md:flex items-center gap-3">
             <button
               type="button"
@@ -93,19 +98,52 @@ const Navbar = () => {
             >
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <Button
-              variant="outline"
-              onClick={() => navigate("/role-select")}
-              className="rounded-full px-6 border-border hover:bg-secondary transition-all duration-300"
-            >
-              Login
-            </Button>
-            <Button
-              onClick={() => navigate("/role-select")}
-              className="rounded-full px-6 shadow-soft hover:shadow-card transition-all duration-300"
-            >
-              Sign Up
-            </Button>
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-2 pl-2 border-l border-border">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="bg-primary/20 text-primary">
+                    {isDoctor ? <Stethoscope className="w-4 h-4" /> : null}
+                    {!isDoctor && user.name ? (
+                      <span className="text-xs font-medium">{user.name.slice(0, 2).toUpperCase()}</span>
+                    ) : null}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden sm:block text-left">
+                  <p className="text-sm font-medium text-foreground leading-tight">{user.name}</p>
+                  <p className="text-xs text-muted-foreground leading-tight truncate max-w-[140px]">
+                    {user.email}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full text-muted-foreground hover:text-foreground shrink-0"
+                  onClick={() => {
+                    logout();
+                    navigate("/");
+                  }}
+                  aria-label="Log out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/role-select")}
+                  className="rounded-full px-6 border-border hover:bg-secondary transition-all duration-300"
+                >
+                  Login
+                </Button>
+                <Button
+                  onClick={() => navigate("/role-select")}
+                  className="rounded-full px-6 shadow-soft hover:shadow-card transition-all duration-300"
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -152,25 +190,54 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex gap-3 mt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigate("/role-select");
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex-1 rounded-full"
-                >
-                  Login
-                </Button>
-                <Button
-                  onClick={() => {
-                    navigate("/role-select");
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex-1 rounded-full"
-                >
-                  Sign Up
-                </Button>
+                {isAuthenticated && user ? (
+                  <div className="flex items-center gap-2 w-full py-2 px-3 rounded-lg bg-muted/50">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary/20 text-primary text-xs">
+                        {isDoctor ? <Stethoscope className="w-4 h-4" /> : user.name.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full shrink-0"
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                        navigate("/");
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-1" />
+                      Log out
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate("/role-select");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex-1 rounded-full"
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate("/role-select");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex-1 rounded-full"
+                    >
+                      Sign Up
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

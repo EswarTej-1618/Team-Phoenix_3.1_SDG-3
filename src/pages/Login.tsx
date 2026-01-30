@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 
 const roleConfig = {
   mother: {
@@ -27,6 +28,7 @@ const roleConfig = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [searchParams] = useSearchParams();
   const roleId = (searchParams.get("role") || "mother") as keyof typeof roleConfig;
   const role = roleConfig[roleId] || roleConfig.mother;
@@ -35,18 +37,36 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // UI only - no authentication logic
-    console.log("Login attempted:", { email, role: roleId });
+    setError("");
+    const success = login(email, password, roleId);
+    if (success) {
+      if (roleId === "doctor" || roleId === "asha") {
+        navigate("/patient-details", { replace: true });
+      } else if (roleId === "mother") {
+        navigate("/mother-dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    } else {
+      const hint =
+        roleId === "doctor"
+          ? "doctor@safemom.com / doctor123"
+          : roleId === "asha"
+            ? "asha@safemom.com / asha123"
+            : "priya@safemom.com / priya123 (or any email and password)";
+      setError(`Invalid email or password. Demo: ${hint}`);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="min-h-screen flex items-center justify-center px-6 pt-20 pb-12">
+      <section className="min-h-screen flex items-center justify-center px-6 lg:px-12 pt-20 pb-12">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-32 left-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
@@ -57,7 +77,7 @@ const Login = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative z-10 w-full max-w-md"
+          className="relative z-10 w-full max-w-md lg:max-w-lg"
         >
           {/* Back button */}
           <Button
@@ -151,6 +171,12 @@ const Login = () => {
                   Forgot Password?
                 </button>
               </div>
+
+              {error && (
+                <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+                  {error}
+                </p>
+              )}
 
               {/* Submit Button */}
               <Button
