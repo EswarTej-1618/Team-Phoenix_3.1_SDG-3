@@ -32,11 +32,13 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img
-                src="/safemom-logo.png"
-                alt="SafeMOM"
-                className="h-9 w-auto object-contain"
-              />
+              <div className="h-9 w-7 overflow-hidden rounded-[50%] bg-card/80 flex-shrink-0 flex items-center justify-center p-0.5">
+                <img
+                  src="/safemom-logo.png"
+                  alt="SafeMOM"
+                  className="w-full h-full object-contain object-center"
+                />
+              </div>
               <span className="text-xl font-semibold text-foreground">
                 Safe<span className="text-primary">MOM</span>
               </span>
@@ -115,7 +117,9 @@ const Footer = () => {
             © 2024 SafeMOM. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
-            <img src="/safemom-logo.png" alt="SafeMOM" className="h-6 w-auto object-contain opacity-90" />
+            <div className="h-6 w-5 overflow-hidden rounded-[50%] bg-card/80 flex-shrink-0 flex items-center justify-center p-0.5 opacity-90">
+              <img src="/safemom-logo.png" alt="SafeMOM" className="w-full h-full object-contain object-center" />
+            </div>
             <span>SafeMOM — for mothers everywhere</span>
           </div>
         </div>

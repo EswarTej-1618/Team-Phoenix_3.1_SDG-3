@@ -43,18 +43,20 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo - SafeMOM with our logo */}
+          {/* Logo - SafeMOM with oval logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-2"
             >
-              <img
-                src="/safemom-logo.png"
-                alt="SafeMOM"
-                className="h-9 w-auto object-contain"
-              />
+              <div className="h-10 w-8 overflow-hidden rounded-[50%] bg-card flex-shrink-0 flex items-center justify-center p-0.5">
+                <img
+                  src="/safemom-logo.png"
+                  alt="SafeMOM"
+                  className="w-full h-full object-contain object-center"
+                />
+              </div>
               <span className="text-xl font-semibold text-foreground hidden sm:inline">
                 Safe<span className="text-primary">MOM</span>
               </span>
