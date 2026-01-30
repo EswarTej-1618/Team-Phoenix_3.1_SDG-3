@@ -1,23 +1,22 @@
 /**
- * SafeMOM: mother and baby image in an oval with radiating ring animation.
+ * SafeMOM: mother and baby image in a circle with radiating ring animation.
  */
 import { motion } from "framer-motion";
 
 const RING_COUNT = 5;
-const OVAL_WIDTH = 280;
-const OVAL_HEIGHT = 350;
+const SIZE = 350;
 
 const MotherBabyHeartAnimation = () => {
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Animated concentric oval rings */}
+    <div className="relative flex items-center justify-center w-[350px] h-[350px] shrink-0">
+      {/* Animated concentric circular rings */}
       {[...Array(RING_COUNT)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-[50%] border-2 border-primary/40"
+          className="absolute rounded-full border-2 border-primary/40"
           style={{
-            width: OVAL_WIDTH + (i + 1) * 32,
-            height: OVAL_HEIGHT + (i + 1) * 40,
+            width: SIZE + (i + 1) * 36,
+            height: SIZE + (i + 1) * 36,
           }}
           animate={{
             scale: [1, 1.08, 1],
@@ -33,10 +32,10 @@ const MotherBabyHeartAnimation = () => {
 
       {/* Inner glow ring */}
       <motion.div
-        className="absolute rounded-[50%] border-2 border-primary/60 shadow-[0_0_30px_hsl(205_100%_55%_/_0.25)]"
+        className="absolute rounded-full border-2 border-primary/60 shadow-[0_0_30px_hsl(205_100%_55%_/_0.25)]"
         style={{
-          width: OVAL_WIDTH + 16,
-          height: OVAL_HEIGHT + 20,
+          width: SIZE + 16,
+          height: SIZE + 16,
         }}
         animate={{
           opacity: [0.4, 0.8, 0.4],
@@ -52,18 +51,17 @@ const MotherBabyHeartAnimation = () => {
         }}
       />
 
-      {/* Floating dots around the oval */}
+      {/* Floating dots around the circle */}
       {[...Array(12)].map((_, i) => {
         const angle = (i / 12) * Math.PI * 2;
-        const rx = OVAL_WIDTH / 2 + 80;
-        const ry = OVAL_HEIGHT / 2 + 100;
+        const r = SIZE / 2 + 90;
         return (
           <motion.div
             key={`dot-${i}`}
             className="absolute w-1.5 h-1.5 rounded-full bg-primary/60 -translate-x-1/2 -translate-y-1/2"
             style={{
-              left: `calc(50% + ${Math.cos(angle) * rx}px)`,
-              top: `calc(50% + ${Math.sin(angle) * ry}px)`,
+              left: `calc(50% + ${Math.cos(angle) * r}px)`,
+              top: `calc(50% + ${Math.sin(angle) * r}px)`,
             }}
             animate={{
               opacity: [0.3, 0.9, 0.3],
@@ -78,18 +76,15 @@ const MotherBabyHeartAnimation = () => {
         );
       })}
 
-      {/* Oval frame + image */}
+      {/* Circular frame + image */}
       <div
-        className="relative overflow-hidden rounded-[50%] bg-white/5 shadow-lg"
-        style={{
-          width: OVAL_WIDTH,
-          height: OVAL_HEIGHT,
-        }}
+        className="relative overflow-hidden rounded-full bg-white/5 shadow-lg aspect-square w-[350px] h-[350px]"
+        style={{ width: SIZE, height: SIZE }}
       >
         <img
           src="/mother-baby-heart.png"
           alt="Mother holding baby with heartbeat"
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-cover object-center rounded-full"
         />
       </div>
     </div>
