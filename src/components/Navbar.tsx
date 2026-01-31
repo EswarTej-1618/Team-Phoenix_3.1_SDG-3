@@ -137,7 +137,7 @@ const Navbar = () => {
                   Login
                 </Button>
                 <Button
-                  onClick={() => navigate("/role-select")}
+                  onClick={() => navigate("/signup")}
                   className="rounded-full px-6 shadow-soft hover:shadow-card transition-all duration-300"
                 >
                   Sign Up
@@ -229,7 +229,7 @@ const Navbar = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        navigate("/role-select");
+                        navigate("/signup");
                         setMobileMenuOpen(false);
                       }}
                       className="flex-1 rounded-full"

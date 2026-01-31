@@ -195,7 +195,11 @@ const Login = () => {
               className="text-center mt-6 text-muted-foreground"
             >
               Don't have an account?{" "}
-              <button className="text-primary font-medium hover:underline">
+              <button
+                type="button"
+                className="text-primary font-medium hover:underline"
+                onClick={() => navigate("/signup")}
+              >
                 Sign Up
               </button>
             </motion.p>

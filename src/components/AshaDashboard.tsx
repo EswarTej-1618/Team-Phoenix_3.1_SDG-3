@@ -81,7 +81,7 @@ export function AshaDashboard({ ashaName }: AshaDashboardProps) {
     }
     if (filter === "highRisk") list = list.filter((p) => p.riskLevel === "high");
     else if (filter === "followUp") list = list.filter((p) => p.followUpNeeded);
-    else if (filter === "pregnant") list = list; // all pregnant
+    // "pregnant" filter shows all (no additional filter)
     return list;
   }, [patients, search, filter]);
 

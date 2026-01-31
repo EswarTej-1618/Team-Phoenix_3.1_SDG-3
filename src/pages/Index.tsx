@@ -11,9 +11,13 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AIChatbot from "@/components/AIChatbot";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMotherProfileById } from "@/data/motherProfiles";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const motherProfile = user?.role === "mother" ? getMotherProfileById(user.id) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -138,7 +142,7 @@ const Index = () => {
       <Footer />
 
       {/* AI Chatbot */}
-      <AIChatbot />
+      <AIChatbot motherProfile={motherProfile ?? undefined} />
     </div>
   );
 };

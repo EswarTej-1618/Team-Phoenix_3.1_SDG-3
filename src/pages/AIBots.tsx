@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AIChatbot from "@/components/AIChatbot";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMotherProfileById } from "@/data/motherProfiles";
 
 const features = [
   {
@@ -29,6 +31,8 @@ const features = [
 ];
 
 const AIBots = () => {
+  const { user } = useAuth();
+  const motherProfile = user?.role === "mother" ? getMotherProfileById(user.id) : null;
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -115,7 +119,7 @@ const AIBots = () => {
         </div>
       </div>
 
-      <AIChatbot />
+      <AIChatbot motherProfile={motherProfile ?? undefined} />
     </div>
   );
 };

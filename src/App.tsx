@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import RoleSelect from "./pages/RoleSelect";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import LiveVitals from "./pages/LiveVitals";
 import AIBots from "./pages/AIBots";
 import PatientDetails from "./pages/PatientDetails";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/role-select" element={<RoleSelect />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
               <Route
                 path="/mother-dashboard"
                 element={

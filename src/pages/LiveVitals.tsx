@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AIChatbot from "@/components/AIChatbot";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMotherProfileById } from "@/data/motherProfiles";
 
 type VitalStatus = "good" | "warning" | "danger";
 type VitalTrend = "up" | "down" | "stable";
@@ -43,6 +45,8 @@ const generateRandomVital = (
 };
 
 const LiveVitals = () => {
+  const { user } = useAuth();
+  const motherProfile = user?.role === "mother" ? getMotherProfileById(user.id) : null;
   const [vitals, setVitals] = useState<VitalsState>({
     heartRate: { value: 78, unit: "bpm", status: "good", trend: "stable", normalRange: "60-100 bpm" },
     stress: { value: 35, unit: "%", status: "good", trend: "stable", normalRange: "< 50%" },
@@ -177,7 +181,31 @@ const LiveVitals = () => {
         </div>
       </div>
 
-      <AIChatbot />
+      <AIChatbot
+        vitals={{
+          heartRate: {
+            ...vitals.heartRate,
+            status: vitals.heartRate.status === "good" ? "Normal" : vitals.heartRate.status === "warning" ? "Moderate" : "Risky",
+          },
+          stress: {
+            ...vitals.stress,
+            status: vitals.stress.status === "good" ? "Normal" : vitals.stress.status === "warning" ? "Moderate" : "Risky",
+          },
+          spo2: {
+            ...vitals.spo2,
+            status: vitals.spo2.status === "good" ? "Normal" : vitals.spo2.status === "warning" ? "Moderate" : "Risky",
+          },
+          bloodPressure: {
+            ...vitals.bloodPressure,
+            status: vitals.bloodPressure.status === "good" ? "Normal" : vitals.bloodPressure.status === "warning" ? "Moderate" : "Risky",
+          },
+          glucose: {
+            ...vitals.glucose,
+            status: vitals.glucose.status === "good" ? "Normal" : vitals.glucose.status === "warning" ? "Moderate" : "Risky",
+          },
+        }}
+        motherProfile={motherProfile ?? undefined}
+      />
     </div>
   );
 };

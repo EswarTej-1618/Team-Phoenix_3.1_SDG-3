@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { getMotherProfileByEmail, verifyMotherPassword, type MotherSignupProfile } from "@/data/motherProfiles";
 
 export type UserRole = "mother" | "doctor" | "asha";
 
@@ -16,6 +17,7 @@ interface AuthContextValue {
   isAsha: boolean;
   isMother: boolean;
   login: (email: string, password: string, role: UserRole) => boolean;
+  signUpMother: (profile: MotherSignupProfile) => boolean;
   logout: () => void;
 }
 
@@ -79,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return false;
     }
-    // For mother: Priya demo or any non-empty for demo
+    // For mother: Priya demo or stored sign-up profile
     if (email === DEMO_MOTHER_PRIYA.email && password === DEMO_MOTHER_PRIYA.password) {
       const authUser: AuthUser = {
         id: "p1",
@@ -91,11 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       sessionStorage.setItem("safemom_user", JSON.stringify(authUser));
       return true;
     }
-    if (email.trim() && password.trim()) {
+    if (verifyMotherPassword(email, password)) {
+      const profile = getMotherProfileByEmail(email)!;
       const authUser: AuthUser = {
-        id: `user-mother-${Date.now()}`,
-        email: email.trim(),
-        name: email.split("@")[0],
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
         role: "mother",
       };
       setUser(authUser);
@@ -103,6 +106,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return true;
     }
     return false;
+  }, []);
+
+  const signUpMother = useCallback((profile: MotherSignupProfile): boolean => {
+    const authUser: AuthUser = {
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      role: "mother",
+    };
+    setUser(authUser);
+    sessionStorage.setItem("safemom_user", JSON.stringify(authUser));
+    return true;
   }, []);
 
   const logout = useCallback(() => {
@@ -117,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAsha: user?.role === "asha",
     isMother: user?.role === "mother",
     login,
+    signUpMother,
     logout,
   };
 
