@@ -119,6 +119,24 @@ const SYMPTOM_QUESTIONS: { key: SymptomKey; label: string }[] = [
   { key: "blurredVisionDizziness", label: "Blurred vision or dizziness?" },
 ];
 
+const RISK_ALERT_API = (import.meta.env.VITE_API_URL ?? "") + "/api/send-risk-alert";
+
+async function sendRiskAlertEmail(riskLevel: string, summary: string, message: string) {
+  try {
+    const res = await fetch(RISK_ALERT_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ riskLevel, summary, message }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      console.warn("Risk alert email failed:", data?.error ?? res.statusText);
+    }
+  } catch (e) {
+    console.warn("Risk alert request failed:", e);
+  }
+}
+
 const parseSymptomsForm = (form: Record<SymptomKey, string>): VitalsSymptoms => ({
   tired: form.tired?.toLowerCase() === "y",
   headacheFever: form.headacheFever?.toLowerCase() === "y",
@@ -313,6 +331,16 @@ const AIChatbot = ({ vitals, motherProfile }: AIChatbotProps) => {
           vitalsSummary: summary,
           riskLevel,
         });
+        if (riskLevel === "high" || riskLevel === "risky") {
+          sendRiskAlertEmail(riskLevel, summary, response);
+        }
+      } else {
+        const riskLevel = detectRiskLevel(response);
+        if (riskLevel === "high" || riskLevel === "risky") {
+          const v = vitalsToUse;
+          const summary = `HR ${v.heartRate.value}, BP ${v.bloodPressure.value}, SpO2 ${v.spo2.value}, Glucose ${v.glucose.value}`;
+          sendRiskAlertEmail(riskLevel, summary, response);
+        }
       }
     } finally {
       setIsTyping(false);
@@ -350,6 +378,14 @@ const AIChatbot = ({ vitals, motherProfile }: AIChatbotProps) => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, botMsg]);
+      const chatRiskLevel = detectRiskLevel(response);
+      if (chatRiskLevel === "high" || chatRiskLevel === "risky") {
+        sendRiskAlertEmail(
+          chatRiskLevel,
+          "Chat assessment",
+          response
+        );
+      }
       saveToHistory({
         id: crypto.randomUUID(),
         mode: "chat",
