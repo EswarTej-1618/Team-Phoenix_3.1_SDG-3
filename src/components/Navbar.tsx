@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Bot, Activity, Menu, X, Sun, Moon, Users, Stethoscope, LogOut } from "lucide-react";
+import { Bot, Activity, Menu, X, Sun, Moon, Users, Stethoscope, LogOut, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -22,6 +22,7 @@ const Navbar = () => {
     ...(user?.role === "mother" ? [{ name: "My Profile", href: "/mother-dashboard", icon: Users }] : []),
     { name: "AI Bots", href: "/ai-bots", icon: Bot },
     ...(isAsha ? [] : [{ name: "Live Vitals", href: "/live-vitals", icon: Activity }]),
+    ...(isDoctor || isAsha ? [{ name: "Notifications", href: "/notification-history", icon: Bell }] : []),
     { name: "Features", href: isHome ? "#features" : "/#features" },
     { name: "Contact", href: isHome ? "#contact" : "/#contact" },
   ];
@@ -46,7 +47,7 @@ const Navbar = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border/50"
     >
-      <div className="container mx-auto px-6 lg:px-8 xl:px-10 py-4">
+      <div className="w-full px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo - SafeMOM with oval logo */}
           <Link to="/" className="flex items-center gap-2 group">
@@ -69,7 +70,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center justify-center flex-1 gap-6 px-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -80,7 +81,7 @@ const Navbar = () => {
                     handleNavClick(link.href);
                   }
                 }}
-                className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-sm font-medium"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-sm font-medium whitespace-nowrap"
               >
                 {link.icon && <link.icon className="w-4 h-4" />}
                 {link.name}
@@ -89,7 +90,7 @@ const Navbar = () => {
           </div>
 
           {/* Right side: theme toggle + logged-in profile or Login/Sign Up */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <button
               type="button"
               onClick={toggleTheme}
@@ -99,7 +100,7 @@ const Navbar = () => {
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-2 pl-2 border-l border-border">
+              <div className="flex items-center gap-3 pl-3 border-l border-border">
                 <Avatar className="h-9 w-9">
                   <AvatarFallback className="bg-primary/20 text-primary">
                     {isDoctor ? <Stethoscope className="w-4 h-4" /> : null}
@@ -108,7 +109,7 @@ const Navbar = () => {
                     ) : null}
                   </AvatarFallback>
                 </Avatar>
-                <div className="hidden sm:block text-left">
+                <div className="hidden lg:block text-left">
                   <p className="text-sm font-medium text-foreground leading-tight">{user.name}</p>
                   <p className="text-xs text-muted-foreground leading-tight truncate max-w-[140px]">
                     {user.email}

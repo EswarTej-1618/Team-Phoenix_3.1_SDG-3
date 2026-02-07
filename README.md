@@ -67,10 +67,15 @@ Whenever the AI result is **High** or **Risky**, the system also triggers an **e
 - **Alerts & notifications**
   - When AI classifies risk as **High** or **Risky**, the backend sends an email alert via **Nodemailer**.
   - Alert email contains: risk level, vitals summary, and the AI’s explanation for quick triage.
+  - **History Dashboard**: All alerts are logged and viewable in the app to ensure reliable delivery tracking.
 
 - **Maternal reports**
   - Generates a full maternal health report (HTML / printable) for each mother.
   - Summarizes history, chronic conditions, vitals, risk trends, and recommendations.
+
+- **Notification History & Analytics**
+  - **Dashboard**: View a detailed log of all sent email alerts with delivery status (Success/Failed).
+  - **Analytics**: Track success rates, failure reasons, and view the content of sent alerts for troubleshooting.
 
 - **Smart onboarding & sign‑up**
   - Demo logins for doctor, ASHA, and a sample mother (Priya).
@@ -126,7 +131,7 @@ Use these accounts on the **Login** screen. First choose the role in the app, th
   - **`pages/`**
     - `Login.tsx`, `SignUp.tsx`, `RoleSelect.tsx`
     - `MotherDashboard.tsx`, `PatientDetails.tsx`, `PatientProfile.tsx`
-    - `AIBots.tsx`, `LiveVitals.tsx`, `Index.tsx`
+    - `AIBots.tsx`, `LiveVitals.tsx`, `NotificationHistory.tsx`, `Index.tsx`
   - **`components/`**
     - Reusable UI elements (Navbar, cards, vitals widgets, chatbot, etc.).
   - **`contexts/AuthContext.tsx`**
@@ -139,6 +144,8 @@ Use these accounts on the **Login** screen. First choose the role in the app, th
 - **`server/`**
   - Minimal Express + Nodemailer service:
     - Endpoint: `POST /api/send-risk-alert`
+    - Endpoint: `GET /api/notification-history` & `/api/notification-stats`
+    - `notificationHistory.js`: Handles logging of alerts to JSON.
     - Sends high‑risk email alerts to a configured mailbox.
 
 ---
@@ -193,7 +200,7 @@ npm install
 npm start
 ```
 
-This starts the Node/Express server at `http://localhost:3001`.  
+This starts the Node/Express server at `http://localhost:3001`.
 Vite is configured to **proxy `/api`** calls to this server in development.
 
 ### 5. Run the frontend
@@ -337,4 +344,3 @@ Planned / possible future enhancements:
 - **Multi‑language support** (e.g. Hindi, Telugu, etc.) for chatbot and UI.
 - **Offline‑first workflows** for ASHA workers in low‑connectivity areas.
 - Integration with **government health systems** and EMR platforms.
-

@@ -1,7 +1,11 @@
-require("dotenv").config({ path: require("path").resolve(__dirname, "../.env.local") });
+require("dotenv").config({
+  path: require("path").resolve(__dirname, "../.env.local"),
+});
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const notificationHistory = require("./notificationHistory");
+
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
@@ -28,27 +32,58 @@ function getTransporter() {
       auth: { user, pass },
     });
   }
-  // Otherwise use "service" (e.g. gmail) – Gmail requires App Password, not normal password
+  // For Gmail, explicitly use port 587 with STARTTLS to avoid IPv6/SSL issues
   return nodemailer.createTransport({
-    service: process.env.SMTP_SERVICE || "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: { user, pass },
+    // Force IPv4 to avoid IPv6 connection issues
+    family: 4,
   });
 }
 
 app.post("/api/send-risk-alert", async (req, res) => {
   const { riskLevel, summary, message } = req.body || {};
-  console.log("[Risk alert] Received:", riskLevel ? "riskLevel=" + riskLevel : "missing riskLevel");
+  console.log(
+    "[Risk alert] Received:",
+    riskLevel ? "riskLevel=" + riskLevel : "missing riskLevel",
+  );
+  console.log("[Risk alert] Body:", JSON.stringify(req.body || {}));
   if (!riskLevel) {
     return res.status(400).json({ ok: false, error: "riskLevel is required" });
   }
 
   const transporter = getTransporter();
   if (!transporter) {
-    console.log("[Risk alert] Email not configured (SMTP_USER/SMTP_PASS missing)");
+    console.log(
+      "[Risk alert] Email not configured (SMTP_USER/SMTP_PASS missing)",
+    );
     return res.status(503).json({
       ok: false,
       error: "Email not configured. Set SMTP_USER and SMTP_PASS in .env.local",
     });
+  }
+
+  // Verify transporter before attempting to send mail so failures are explicit in logs
+  try {
+    await transporter.verify();
+    console.log("[Risk alert] SMTP transporter verified");
+  } catch (verifyErr) {
+    console.error(
+      "[Risk alert] Transporter verify failed:",
+      verifyErr && (verifyErr.message || verifyErr),
+    );
+    return res
+      .status(500)
+      .json({
+        ok: false,
+        error:
+          "SMTP transporter verify failed: " +
+          (verifyErr && verifyErr.message
+            ? verifyErr.message
+            : String(verifyErr)),
+      });
   }
 
   const subject = `[SafeMom] High risk identified: ${riskLevel}`;
@@ -69,22 +104,58 @@ app.post("/api/send-risk-alert", async (req, res) => {
   `.trim();
 
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: RISK_ALERT_EMAIL,
       subject,
       text,
       html,
     });
-    console.log("[Risk alert] Email sent to", RISK_ALERT_EMAIL);
-    res.json({ ok: true });
+    console.log("[Risk alert] Email sent to", RISK_ALERT_EMAIL, "info:", info);
+
+    // Record successful notification
+    notificationHistory.addNotification({
+      status: 'success',
+      riskLevel,
+      recipient: RISK_ALERT_EMAIL,
+      summary,
+      messagePreview: message ? message.substring(0, 100) + '...' : '',
+      messageId: info.messageId,
+      response: info.response
+    });
+
+    res.json({ ok: true, info });
   } catch (err) {
-    console.error("[Risk alert] Email failed:", err.message || err);
+    console.error("[Risk alert] Email failed:", err && (err.message || err));
+
+    // Record failed notification
+    notificationHistory.addNotification({
+      status: 'failed',
+      riskLevel,
+      recipient: RISK_ALERT_EMAIL,
+      summary,
+      messagePreview: message ? message.substring(0, 100) + '...' : '',
+      error: err.message || 'Unknown error'
+    });
+
     res.status(500).json({
       ok: false,
       error: err.message || "Failed to send email",
     });
   }
+});
+
+// Get notification history
+app.get("/api/notification-history", (req, res) => {
+  const limit = parseInt(req.query.limit) || 10;
+  const notifications = notificationHistory.getRecentNotifications(limit);
+  res.json({ ok: true, notifications });
+});
+
+// Get notification statistics
+app.get("/api/notification-stats", (req, res) => {
+  const stats = notificationHistory.getStats();
+  res.json({ ok: true, stats });
 });
 
 function escapeHtml(s) {
@@ -94,6 +165,7 @@ function escapeHtml(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+
 
 app.listen(PORT, () => {
   console.log(`SafeMom server running at http://localhost:${PORT}`);

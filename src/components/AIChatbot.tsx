@@ -61,11 +61,28 @@ const detectRiskLevel = (text: string): RiskLevel | null => {
   const match = text.match(
     /(?:classified as|risk is|overall risk)\s+(?:is\s+)?(?:classified\s+as\s+)?\*?\*?\s*(Risky|High|Moderate|Normal)\s*\*?\*?/i
   );
-  if (match) return match[1].toLowerCase() as RiskLevel;
-  if (/\brisky\b/i.test(text)) return "risky";
-  if (/\bhigh\b.*risk|risk.*\bhigh\b/i.test(text)) return "high";
-  if (/\bmoderate\b/i.test(text)) return "moderate";
-  if (/\bnormal\b/i.test(text)) return "normal";
+  if (match) {
+    const level = match[1].toLowerCase() as RiskLevel;
+    console.log(`[RISK DETECTION] Detected risk level: ${level.toUpperCase()} (from pattern match)`);
+    return level;
+  }
+  if (/\brisky\b/i.test(text)) {
+    console.log("[RISK DETECTION] Detected risk level: RISKY (from keyword)");
+    return "risky";
+  }
+  if (/\bhigh\b.*risk|risk.*\bhigh\b/i.test(text)) {
+    console.log("[RISK DETECTION] Detected risk level: HIGH (from keyword)");
+    return "high";
+  }
+  if (/\bmoderate\b/i.test(text)) {
+    console.log("[RISK DETECTION] Detected risk level: MODERATE (from keyword)");
+    return "moderate";
+  }
+  if (/\bnormal\b/i.test(text)) {
+    console.log("[RISK DETECTION] Detected risk level: NORMAL (from keyword)");
+    return "normal";
+  }
+  console.log("[RISK DETECTION] No risk level detected in AI response");
   return null;
 };
 
@@ -122,18 +139,34 @@ const SYMPTOM_QUESTIONS: { key: SymptomKey; label: string }[] = [
 const RISK_ALERT_API = (import.meta.env.VITE_API_URL ?? "") + "/api/send-risk-alert";
 
 async function sendRiskAlertEmail(riskLevel: string, summary: string, message: string) {
+  console.log(`[EMAIL ALERT] Attempting to send ${riskLevel.toUpperCase()} risk alert...`);
+  console.log(`[EMAIL ALERT] API URL: ${RISK_ALERT_API}`);
+  console.log(`[EMAIL ALERT] Summary: ${summary}`);
+
   try {
     const res = await fetch(RISK_ALERT_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ riskLevel, summary, message }),
     });
+
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      console.warn("Risk alert email failed:", data?.error ?? res.statusText);
+      console.error(`[EMAIL ALERT] ✗ Failed with status ${res.status}`);
+      console.error("[EMAIL ALERT] Error:", data?.error ?? res.statusText);
+      console.error("[EMAIL ALERT] Make sure the server is running: cd server && npm start");
+    } else {
+      console.log(`[EMAIL ALERT] ✓ SUCCESS! Email sent for ${riskLevel.toUpperCase()} risk`);
+      console.log("[EMAIL ALERT] Response:", data);
+      // Show a brief success notification to the user
+      if (typeof window !== 'undefined') {
+        console.info(`📧 Alert email sent to healthcare provider for ${riskLevel.toUpperCase()} risk level`);
+      }
     }
   } catch (e) {
-    console.warn("Risk alert request failed:", e);
+    console.error("[EMAIL ALERT] ✗ Request failed:", e);
+    console.error("[EMAIL ALERT] Is the server running on port 3001?");
   }
 }
 
@@ -679,13 +712,12 @@ const AIChatbot = ({ vitals, motherProfile }: AIChatbotProps) => {
                               className={`flex gap-2 ${m.isBot ? "" : "flex-row-reverse"}`}
                             >
                               <div
-                                className={`rounded-xl px-3 py-2 text-sm max-w-[90%] min-w-0 ${
-                                  m.isBot
-                                    ? riskLevel && styles
-                                      ? `border-2 ${styles.card}`
-                                      : "bg-secondary"
-                                    : "bg-primary text-primary-foreground"
-                                }`}
+                                className={`rounded-xl px-3 py-2 text-sm max-w-[90%] min-w-0 ${m.isBot
+                                  ? riskLevel && styles
+                                    ? `border-2 ${styles.card}`
+                                    : "bg-secondary"
+                                  : "bg-primary text-primary-foreground"
+                                  }`}
                               >
                                 {m.isBot && riskLevel && styles && (
                                   <div
@@ -729,14 +761,12 @@ const AIChatbot = ({ vitals, motherProfile }: AIChatbotProps) => {
                       className={`flex ${m.isBot ? "justify-start" : "justify-end"}`}
                     >
                       <div
-                        className={`flex items-end gap-2 max-w-[85%] ${
-                          m.isBot ? "flex-row" : "flex-row-reverse"
-                        }`}
+                        className={`flex items-end gap-2 max-w-[85%] ${m.isBot ? "flex-row" : "flex-row-reverse"
+                          }`}
                       >
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            m.isBot ? "bg-primary/10" : "bg-accent/10"
-                          }`}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${m.isBot ? "bg-primary/10" : "bg-accent/10"
+                            }`}
                         >
                           {m.isBot ? (
                             <Bot className="w-4 h-4 text-primary" />
@@ -745,11 +775,10 @@ const AIChatbot = ({ vitals, motherProfile }: AIChatbotProps) => {
                           )}
                         </div>
                         <div
-                          className={`rounded-2xl px-4 py-3 ${
-                            m.isBot
-                              ? "bg-secondary text-foreground rounded-bl-sm"
-                              : "bg-primary text-primary-foreground rounded-br-sm"
-                          }`}
+                          className={`rounded-2xl px-4 py-3 ${m.isBot
+                            ? "bg-secondary text-foreground rounded-bl-sm"
+                            : "bg-primary text-primary-foreground rounded-br-sm"
+                            }`}
                         >
                           <p className="text-sm leading-relaxed whitespace-pre-wrap">
                             {renderMessageText(m.text)}

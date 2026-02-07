@@ -14,6 +14,7 @@ import AIBots from "./pages/AIBots";
 import PatientDetails from "./pages/PatientDetails";
 import PatientProfile from "./pages/PatientProfile";
 import MotherDashboard from "./pages/MotherDashboard";
+import NotificationHistory from "./pages/NotificationHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +80,7 @@ const App = () => (
                   </ProtectedPatientDetailsRoute>
                 }
               />
+              <Route path="/notification-history" element={<NotificationHistory />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
