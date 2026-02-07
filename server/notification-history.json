@@ -1,0 +1,59 @@
+{
+  "notifications": [
+    {
+      "id": "1770458725645",
+      "timestamp": "2026-02-07T10:05:25.645Z",
+      "status": "success",
+      "riskLevel": "high",
+      "recipient": "eswardhavala1@gmail.com",
+      "summary": "HR 90, BP 120, SpO2 99, Glucose 163",
+      "messagePreview": "Hello there! Thank you for sharing your vital signs and symptoms.\n\nBased on your current vitals and ...",
+      "messageId": "<d993874b-5db6-8580-4408-95c2fe53e2a4@gmail.com>",
+      "response": "250 2.0.0 OK  1770458698 98e67ed59e1d1-354b1f49186sm4683140a91.5 - gsmtp"
+    },
+    {
+      "id": "1770446744429",
+      "timestamp": "2026-02-07T06:45:44.429Z",
+      "status": "success",
+      "riskLevel": "risky",
+      "recipient": "eswardhavala1@gmail.com",
+      "summary": "HR 100, BP 150, SpO2 99, Glucose 80",
+      "messagePreview": "Hello there. Let's look at your current health status.\n\nBased on your elevated Blood Pressure (150 m...",
+      "messageId": "<2f9b58eb-ad14-bc17-3da7-fea1a901963c@gmail.com>",
+      "response": "250 2.0.0 OK  1770446716 d9443c01a7336-2aad174a28bsm6579715ad.44 - gsmtp"
+    },
+    {
+      "id": "1770446251277",
+      "timestamp": "2026-02-07T06:37:31.277Z",
+      "status": "success",
+      "riskLevel": "risky",
+      "recipient": "eswardhavala1@gmail.com",
+      "summary": "HR 100, BP 189, SpO2 99, Glucose 220",
+      "messagePreview": "Hello! Thank you for sharing your current vital signs and symptoms.\n\nYour Heart Rate, Stress Level, ...",
+      "messageId": "<4b80ceb9-3998-cd37-71cc-778dbcd8ce5d@gmail.com>",
+      "response": "250 2.0.0 OK  1770446223 41be03b00d2f7-c6de0128b6esm616611a12.26 - gsmtp"
+    },
+    {
+      "id": "1770446097063",
+      "timestamp": "2026-02-07T06:34:57.063Z",
+      "status": "success",
+      "riskLevel": "risky",
+      "recipient": "eswardhavala1@gmail.com",
+      "summary": "HR 120, BP 145, SpO2 92, Glucose 150",
+      "messagePreview": "Test alert: RISKY risk detected. Heart rate elevated, blood pressure high....",
+      "messageId": "<6a2a7d40-31be-7fde-bc27-709b73abd89f@gmail.com>",
+      "response": "250 2.0.0 OK  1770446069 d2e1a72fcca58-8244168fdf5sm4340768b3a.17 - gsmtp"
+    },
+    {
+      "id": "1770446081417",
+      "timestamp": "2026-02-07T06:34:41.417Z",
+      "status": "success",
+      "riskLevel": "high",
+      "recipient": "eswardhavala1@gmail.com",
+      "summary": "HR 120, BP 145, SpO2 92, Glucose 150",
+      "messagePreview": "Test alert: HIGH risk detected. Heart rate elevated, blood pressure high....",
+      "messageId": "<fe1b43de-e7c9-ae41-78a6-56a358e85687@gmail.com>",
+      "response": "250 2.0.0 OK  1770446053 d9443c01a7336-2a95e2fad78sm19065995ad.45 - gsmtp"
+    }
+  ]
+}
